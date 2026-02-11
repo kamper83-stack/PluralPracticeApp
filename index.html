@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול יחיד ורבים באנגלית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Assistant', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden hidden">
+        <!-- Header / Progress -->
+        <div class="bg-blue-600 p-4 text-white flex justify-between items-center font-bold">
+            <span id="progress-text">שאלה 1/12</span>
+            <span id="score-text" class="bg-blue-700 px-3 py-1 rounded-full text-sm">נקודות: 0</span>
+        </div>
+
+        <div class="p-6">
+            <!-- Singular Word Display -->
+            <div class="flex flex-col items-center mb-8">
+                <div id="word-icon" class="text-8xl mb-4 transform hover:scale-110 transition-transform cursor-default">
+                    🐦
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <h2 id="singular-word" class="text-4xl font-extrabold text-slate-800 tracking-wide uppercase">
+                        BIRD
+                    </h2>
+                    <button onclick="speakWord()" class="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    </button>
+                </div>
+                <p class="text-gray-500 mt-1">יחיד (Singular)</p>
+            </div>
+
+            <!-- Hint Section -->
+            <div class="mb-6">
+                <button id="hint-btn" onclick="toggleHint()" class="text-amber-600 flex items-center gap-2 text-sm font-medium hover:underline mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+                    <span>צריך רמז?</span>
+                </button>
+                
+                <div id="rule-box" class="hidden mt-3 p-3 rounded-lg text-sm border bg-amber-50 border-amber-200 text-amber-800">
+                    <strong>החוקיות: </strong>
+                    <span id="rule-text">טוען...</span>
+                </div>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="options-grid" class="grid grid-cols-1 gap-3 mb-6">
+                <!-- Buttons will be injected here -->
+            </div>
+
+            <!-- Next Button -->
+            <div id="next-container" class="hidden text-center fade-in">
+                <button onclick="nextQuestion()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]">
+                    <span id="next-btn-text">לשאלה הבאה</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform rotate-180"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Screen -->
+    <div id="end-screen" class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl text-center hidden">
+        <h2 class="text-3xl font-bold text-blue-600 mb-4">סיימת את התרגול!</h2>
+        <p id="final-score" class="text-xl mb-6">הציון שלך: 0 מתוך 0</p>
+        <div class="text-6xl mb-6">🏆</div>
+        <button onclick="restartGame()" class="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            תרגול חוזר
+        </button>
+    </div>
+
+    <script>
+        const questionsData = [
+            { singular: "Bird", plural: "Birds", options: ["Birds", "Birdes", "Birdies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🐦" },
+            { singular: "Box", plural: "Boxes", options: ["Boxs", "Boxes", "Boxies"], rule: "חוק 2: כאשר המילה מסתיימת ב- s, ss, x, ch, sh, z, או o, מוסיפים -es.", icon: "📦" },
+            { singular: "Baby", plural: "Babies", options: ["Babys", "Babies", "Babyes"], rule: "חוק 5: כאשר המילה מסתיימת ב-y ויש לפניה עיצור, משמיטים את ה-y ומוסיפים -ies.", icon: "👶" },
+            { singular: "Leaf", plural: "Leaves", options: ["Leafs", "Leaves", "Leafes"], rule: "חוק 3: כאשר המילה מסתיימת ב-f או fe, משמיטים אותן ומוסיפים -ves.", icon: "🍃" },
+            { singular: "Bus", plural: "Buses", options: ["Buss", "Buses", "Busies"], rule: "חוק 2: כאשר המילה מסתיימת ב-s, מוסיפים -es.", icon: "🚌" },
+            { singular: "Cherry", plural: "Cherries", options: ["Cherrys", "Cherries", "Cherries"], rule: "חוק 5: המילה מסתיימת ב-y לפני עיצור, לכן משנים ל-ies.", icon: "🍒" },
+            { singular: "Tomato", plural: "Tomatoes", options: ["Tomatos", "Tomatoes", "Tomatoies"], rule: "חוק 4: לחלק משמות העצם המסתיימים ב-o, מוסיפים -es.", icon: "🍅" },
+            { singular: "Child", plural: "Children", options: ["Childs", "Children", "Childes"], rule: "יוצא דופן: מילה זו משתנה לחלוטין ברבים (Child -> Children).", icon: "🧒" },
+            { singular: "Foot", plural: "Feet", options: ["Foots", "Feet", "Feets"], rule: "יוצא דופן: התנועות בתוך המילה משתנות (Foot -> Feet).", icon: "🦶" },
+            { singular: "Sheep", plural: "Sheep", options: ["Sheeps", "Sheep", "Sheepes"], rule: "יוצא דופן: המילה נשארת אותו הדבר ביחיד וברבים.", icon: "🐑" },
+            { singular: "Mouse", plural: "Mice", options: ["Mouses", "Mice", "Mices"], rule: "יוצא דופן: המילה משתנה לגמרי (Mouse -> Mice).", icon: "🐁" },
+            { singular: "House", plural: "Houses", options: ["House", "Houses", "Housies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🏠" }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        function init() {
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            currentIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const q = questionsData[currentIndex];
+            
+            document.getElementById('progress-text').innerText = `שאלה ${currentIndex + 1}/${questionsData.length}`;
+            document.getElementById('score-text').innerText = `נקודות: ${score}`;
+            document.getElementById('word-icon').innerText = q.icon;
+            document.getElementById('singular-word').innerText = q.singular;
+            document.getElementById('rule-text').innerText = q.rule;
+            
+            // Reset UI
+            document.getElementById('rule-box').classList.add('hidden');
+            document.getElementById('rule-box').className = 'hidden mt-3 p-3 rounded-lg text-sm border bg-amber-50 border-amber-200 text-amber-800';
+            document.getElementById('hint-btn').classList.remove('hidden');
+            document.getElementById('hint-btn').querySelector('span').innerText = "צריך רמז?";
+            document.getElementById('next-container').classList.add('hidden');
+
+            // Render Shuffled Options
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 rounded-xl text-xl transition-all duration-200 border-2 border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-400 relative flex items-center justify-center";
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(opt, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectOption(selected, btn) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+            
+            const q = questionsData[currentIndex];
+            const isCorrect = selected === q.plural;
+            
+            if (isCorrect) score++;
+
+            // Update score
+            document.getElementById('score-text').innerText = `נקודות: ${score}`;
+
+            // Reveal feedback on all buttons
+            const buttons = document.getElementById('options-grid').querySelectorAll('button');
+            buttons.forEach(b => {
+                b.disabled = true;
+                if (b.innerText === q.plural) {
+                    b.className = "p-4 rounded-xl text-xl border-2 border-green-500 bg-green-100 text-green-800 font-bold relative flex items-center justify-center";
+                    b.innerHTML += `<svg class="absolute left-4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                } else if (b === btn && !isCorrect) {
+                    b.className = "p-4 rounded-xl text-xl border-2 border-red-500 bg-red-100 text-red-800 relative flex items-center justify-center";
+                    b.innerHTML += `<svg class="absolute left-4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+                } else {
+                    b.style.opacity = "0.5";
+                }
+            });
+
+            // Show rule and next button
+            const ruleBox = document.getElementById('rule-box');
+            ruleBox.classList.remove('hidden');
+            ruleBox.className = `mt-3 p-3 rounded-lg text-sm border fade-in ${isCorrect ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}`;
+            
+            document.getElementById('hint-btn').classList.add('hidden');
+            document.getElementById('next-container').classList.remove('hidden');
+            
+            if (currentIndex === questionsData.length - 1) {
+                document.getElementById('next-btn-text').innerText = "סיום ומעבר לתוצאות";
+            }
+        }
+
+        function toggleHint() {
+            const box = document.getElementById('rule-box');
+            const btnText = document.getElementById('hint-btn').querySelector('span');
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+                btnText.innerText = "הסתר רמז";
+            } else {
+                box.classList.add('hidden');
+                btnText.innerText = "צריך רמז?";
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questionsData.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `הציון שלך: ${score} מתוך ${questionsData.length}`;
+        }
+
+        function restartGame() {
+            init();
+        }
+
+        function speakWord() {
+            const word = questionsData[currentIndex].singular;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Start the app
+        window.onload = init;
+    </script>
+</body>
+</html>
