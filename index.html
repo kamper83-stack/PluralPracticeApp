@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תרגול יחיד ורבים באנגלית</title>
+    <title>תרגול יחיד ורבים באנגלית - מורחב</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap');
@@ -19,12 +19,12 @@
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-blue-50 min-h-screen flex items-center justify-center p-4">
 
     <div id="app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden hidden">
         <!-- Header / Progress -->
         <div class="bg-blue-600 p-4 text-white flex justify-between items-center font-bold">
-            <span id="progress-text">שאלה 1/12</span>
+            <span id="progress-text">שאלה 1/32</span>
             <span id="score-text" class="bg-blue-700 px-3 py-1 rounded-full text-sm">נקודות: 0</span>
         </div>
 
@@ -39,7 +39,7 @@
                     <h2 id="singular-word" class="text-4xl font-extrabold text-slate-800 tracking-wide uppercase">
                         BIRD
                     </h2>
-                    <button onclick="speakWord()" class="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
+                    <button onclick="speakWord()" class="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors" title="השמע מילה">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                     </button>
                 </div>
@@ -76,9 +76,10 @@
 
     <!-- End Screen -->
     <div id="end-screen" class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl text-center hidden">
-        <h2 class="text-3xl font-bold text-blue-600 mb-4">סיימת את התרגול!</h2>
+        <h2 class="text-3xl font-bold text-blue-600 mb-4">כל הכבוד! סיימת!</h2>
         <p id="final-score" class="text-xl mb-6">הציון שלך: 0 מתוך 0</p>
         <div class="text-6xl mb-6">🏆</div>
+        <p class="text-gray-600 mb-6 text-sm">מוכן למבחן ב-100%!</p>
         <button onclick="restartGame()" class="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
             תרגול חוזר
@@ -86,7 +87,9 @@
     </div>
 
     <script>
+        // Full database of words (Original + 20 New)
         const questionsData = [
+            // --- Original Words ---
             { singular: "Bird", plural: "Birds", options: ["Birds", "Birdes", "Birdies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🐦" },
             { singular: "Box", plural: "Boxes", options: ["Boxs", "Boxes", "Boxies"], rule: "חוק 2: כאשר המילה מסתיימת ב- s, ss, x, ch, sh, z, או o, מוסיפים -es.", icon: "📦" },
             { singular: "Baby", plural: "Babies", options: ["Babys", "Babies", "Babyes"], rule: "חוק 5: כאשר המילה מסתיימת ב-y ויש לפניה עיצור, משמיטים את ה-y ומוסיפים -ies.", icon: "👶" },
@@ -98,7 +101,42 @@
             { singular: "Foot", plural: "Feet", options: ["Foots", "Feet", "Feets"], rule: "יוצא דופן: התנועות בתוך המילה משתנות (Foot -> Feet).", icon: "🦶" },
             { singular: "Sheep", plural: "Sheep", options: ["Sheeps", "Sheep", "Sheepes"], rule: "יוצא דופן: המילה נשארת אותו הדבר ביחיד וברבים.", icon: "🐑" },
             { singular: "Mouse", plural: "Mice", options: ["Mouses", "Mice", "Mices"], rule: "יוצא דופן: המילה משתנה לגמרי (Mouse -> Mice).", icon: "🐁" },
-            { singular: "House", plural: "Houses", options: ["House", "Houses", "Housies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🏠" }
+            { singular: "House", plural: "Houses", options: ["House", "Houses", "Housies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🏠" },
+
+            // --- 20 New Words ---
+            
+            // Rule 1: Just add S
+            { singular: "Cat", plural: "Cats", options: ["Cats", "Cates", "Caties"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🐱" },
+            { singular: "Dog", plural: "Dogs", options: ["Dogs", "Doges", "Dogies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🐶" },
+            { singular: "Book", plural: "Books", options: ["Books", "Bookes", "Bookies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "📚" },
+            { singular: "Apple", plural: "Apples", options: ["Apples", "Appleies", "Appls"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🍎" },
+            { singular: "Pen", plural: "Pens", options: ["Pens", "Penes", "Pennies"], rule: "חוק 1: לרוב שמות העצם, פשוט מוסיפים -s.", icon: "🖊️" },
+            
+            // Rule 2: Add ES (ch, sh, s, x, z, o)
+            { singular: "Watch", plural: "Watches", options: ["Watchs", "Watches", "Watchies"], rule: "חוק 2: המילה מסתיימת ב-ch, לכן מוסיפים -es.", icon: "⌚" },
+            { singular: "Dish", plural: "Dishes", options: ["Dishs", "Dishes", "Dishies"], rule: "חוק 2: המילה מסתיימת ב-sh, לכן מוסיפים -es.", icon: "🍽️" },
+            { singular: "Fox", plural: "Foxes", options: ["Foxs", "Foxes", "Foxies"], rule: "חוק 2: המילה מסתיימת ב-x, לכן מוסיפים -es.", icon: "🦊" },
+            { singular: "Brush", plural: "Brushes", options: ["Brushs", "Brushes", "Brushies"], rule: "חוק 2: המילה מסתיימת ב-sh, לכן מוסיפים -es.", icon: "🖌️" },
+            { singular: "Potato", plural: "Potatoes", options: ["Potatos", "Potatoes", "Potatoies"], rule: "חוק 4: המילה מסתיימת ב-o, לכן מוסיפים -es.", icon: "🥔" },
+            { singular: "Dress", plural: "Dresses", options: ["Dresss", "Dresses", "Dressies"], rule: "חוק 2: המילה מסתיימת ב-ss, לכן מוסיפים -es.", icon: "👗" },
+
+            // Rule 3: y -> ies
+            { singular: "City", plural: "Cities", options: ["Citys", "Cities", "Cityes"], rule: "חוק 5: המילה מסתיימת ב-y ויש לפניה עיצור, משמיטים ומוסיפים -ies.", icon: "🏙️" },
+            { singular: "Family", plural: "Families", options: ["Familys", "Families", "Familyes"], rule: "חוק 5: המילה מסתיימת ב-y ויש לפניה עיצור, משמיטים ומוסיפים -ies.", icon: "👨‍👩‍👧‍👦" },
+            { singular: "Puppy", plural: "Puppies", options: ["Puppys", "Puppies", "Puppyes"], rule: "חוק 5: המילה מסתיימת ב-y ויש לפניה עיצור, משמיטים ומוסיפים -ies.", icon: "🐕" },
+            { singular: "Story", plural: "Stories", options: ["Storys", "Stories", "Storyes"], rule: "חוק 5: המילה מסתיימת ב-y ויש לפניה עיצור, משמיטים ומוסיפים -ies.", icon: "📖" },
+
+            // Rule 4: f/fe -> ves
+            { singular: "Wolf", plural: "Wolves", options: ["Wolfs", "Wolves", "Wolfes"], rule: "חוק 3: המילה מסתיימת ב-f, משמיטים ומוסיפים -ves.", icon: "🐺" },
+            { singular: "Knife", plural: "Knives", options: ["Knifes", "Knives", "Knivees"], rule: "חוק 3: המילה מסתיימת ב-fe, משמיטים ומוסיפים -ves.", icon: "🔪" },
+            { singular: "Shelf", plural: "Shelves", options: ["Shelfs", "Shelves", "Shelfes"], rule: "חוק 3: המילה מסתיימת ב-f, משמיטים ומוסיפים -ves.", icon: "🗄️" },
+
+            // Irregulars / Special Cases
+            { singular: "Man", plural: "Men", options: ["Mans", "Men", "Manes"], rule: "יוצא דופן: המילה משתנה (Man -> Men).", icon: "👨" },
+            { singular: "Woman", plural: "Women", options: ["Womans", "Women", "Womens"], rule: "יוצא דופן: המילה משתנה (Woman -> Women).", icon: "👩" },
+            { singular: "Person", plural: "People", options: ["Persons", "People", "Peoples"], rule: "יוצא דופן: המילה משתנה לחלוטין (Person -> People).", icon: "👥" },
+            { singular: "Fish", plural: "Fish", options: ["Fishs", "Fish", "Fishes"], rule: "יוצא דופן: המילה נשארת אותו הדבר (כמו Sheep).", icon: "🐟" },
+            { singular: "Tooth", plural: "Teeth", options: ["Tooths", "Teeth", "Teethes"], rule: "יוצא דופן: התנועות משתנות (Tooth -> Teeth).", icon: "🦷" }
         ];
 
         let currentIndex = 0;
@@ -108,9 +146,20 @@
         function init() {
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('end-screen').classList.add('hidden');
+            
+            // Shuffle questions on init so order is random every time
+            shuffleArray(questionsData);
+            
             currentIndex = 0;
             score = 0;
             loadQuestion();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
         function loadQuestion() {
@@ -131,13 +180,13 @@
             document.getElementById('next-container').classList.add('hidden');
 
             // Render Shuffled Options
-            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
             const grid = document.getElementById('options-grid');
             grid.innerHTML = '';
             
-            shuffled.forEach(opt => {
+            shuffledOptions.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = "p-4 rounded-xl text-xl transition-all duration-200 border-2 border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-400 relative flex items-center justify-center";
+                btn.className = "p-4 rounded-xl text-xl transition-all duration-200 border-2 border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-400 relative flex items-center justify-center font-semibold";
                 btn.innerText = opt;
                 btn.onclick = () => selectOption(opt, btn);
                 grid.appendChild(btn);
@@ -162,10 +211,10 @@
                 b.disabled = true;
                 if (b.innerText === q.plural) {
                     b.className = "p-4 rounded-xl text-xl border-2 border-green-500 bg-green-100 text-green-800 font-bold relative flex items-center justify-center";
-                    b.innerHTML += `<svg class="absolute left-4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                    b.innerHTML += `<svg class="absolute left-4 fade-in" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
                 } else if (b === btn && !isCorrect) {
                     b.className = "p-4 rounded-xl text-xl border-2 border-red-500 bg-red-100 text-red-800 relative flex items-center justify-center";
-                    b.innerHTML += `<svg class="absolute left-4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+                    b.innerHTML += `<svg class="absolute left-4 fade-in" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
                 } else {
                     b.style.opacity = "0.5";
                 }
