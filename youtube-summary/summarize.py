@@ -38,11 +38,17 @@ def extract_video_id(url: str) -> str:
     raise ValueError(f"לא ניתן לחלץ מזהה סרטון מ: {url}")
 
 
-def get_transcript(video_id: str) -> str:
+def get_transcript(video_id: str, cookies: str = None, proxy: str = None) -> str:
     """מחלץ תמליל מסרטון יוטיוב."""
     try:
+        kwargs = {}
+        if cookies:
+            kwargs['cookies'] = cookies
+        if proxy:
+            kwargs['proxies'] = {"http": proxy, "https": proxy}
+
         # נסה קודם בעברית, אחר כך באנגלית, אחר כך כל שפה זמינה
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, **kwargs)
 
         transcript = None
         try:
@@ -140,6 +146,16 @@ def main():
         action="store_true",
         help="הצג רק את התמליל ללא סיכום"
     )
+    parser.add_argument(
+        "--cookies", "-c",
+        help="נתיב לקובץ cookies של YouTube (לעקוף חסימת IP)",
+        default=None
+    )
+    parser.add_argument(
+        "--proxy", "-p",
+        help="כתובת proxy (לדוגמה: http://user:pass@host:port)",
+        default=None
+    )
 
     args = parser.parse_args()
 
@@ -153,7 +169,7 @@ def main():
         sys.exit(1)
 
     try:
-        transcript = get_transcript(video_id)
+        transcript = get_transcript(video_id, cookies=args.cookies, proxy=args.proxy)
     except RuntimeError as e:
         print(f"שגיאה: {e}")
         sys.exit(1)
